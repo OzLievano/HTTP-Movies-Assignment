@@ -1,4 +1,6 @@
-import React from 'react'
+import axios from 'axios'
+import React, {useState,useEffect} from 'react'
+import { useParams } from 'react-router-dom'
 
 /*
 {
@@ -9,24 +11,66 @@ import React from 'react'
   stars: ['Kurt Russell', 'Bill Paxton', 'Sam Elliot'],
 } 
 */
-const UpdateMovie = () => {
+const initialState = {
+    id:"",
+    title:"",
+    director:"",
+    metascore:"",
+    stars:[]
+}
+
+const UpdateMovie = (props) => {
+    console.log(props)
+    const [item,setItem] = useState(initialState)
+    const [error,setError] = useState('')
+    const params = useParams()
+
+    useEffect(()=>{
+        axios.get(`http://localhost:5000/api/movies/${params.id}`)
+        .then(res=>{
+            console.log(res.data)
+            setItem(res.data)
+        })
+        .catch(err=>{
+            setError(err.response)
+        })
+    },[params.id])
+
+    const handleChange = (e) => {
+        e.persist()
+        setItem({...item,[e.target.name]:e.target.value})
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        axios.put(`http://localhost:5000/api/movies/${params.id}`,item)
+        .then(res => {
+            console.log(res)
+            props.addToSavedList(item)
+        })
+        .catch(err => {
+            setError(err.response)
+        })
+    }
     return (
         <div className="save-wrapper">
-         <form>
+         <form onSubmit={handleSubmit}>
              <input 
                 type="text"
                 name="title"
                 id="title"
+                value={item.title}
              />
              <input 
                 type="text"
                 name="director"
                 id="director"
+                value={item.director}
              />
              <input 
                 type="number"
                 name="metascore"
                 id="metascore"
+                value={item.metascore}
              />
         </form>   
         </div>
