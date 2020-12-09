@@ -59,19 +59,23 @@ const UpdateMovie = (props) => {
                 name="title"
                 id="title"
                 value={item.title}
+                onChange={handleChange}
              />
              <input 
                 type="text"
                 name="director"
                 id="director"
                 value={item.director}
+                onChange={handleChange}
              />
              <input 
                 type="number"
                 name="metascore"
                 id="metascore"
                 value={item.metascore}
+                onChange={handleChange}
              />
+             <button className="md-button form-button">Update</button>
         </form>   
         </div>
     )
